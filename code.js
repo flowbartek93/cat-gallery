@@ -16,7 +16,7 @@ class Gallery {
   }
 
   async fetchCats() {
-    const url = `https://api.thecatapi.com/v1/images/search?limit=10&mime_types=jpg`;
+    const url = `https://api.thecatapi.com/v1/images/search?limit=8&mime_types=jpg`;
 
     const response = await fetch(url, {
       headers: {
@@ -56,6 +56,7 @@ class Gallery {
         imgElement.src = url;
 
         this.createInterface(url);
+        console.log(this.bottomImages.children);
       });
     });
   }
@@ -68,25 +69,36 @@ class Gallery {
         let clickedElement = e.target.parentElement;
 
         if (clickedElement.classList.contains("right-arrow")) {
-          this.currentIndex > this.images.length
-            ? (this.currentIndex = 0)
-            : this.currentIndex++;
+          if (this.currentIndex >= this.images.length - 1) {
+            this.currentIndex = 0;
+            this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
+            this.bottomImages.children[this.currentIndex].classList.add("active");
+            this.bottomImages.children[this.images.length - 1].classList.remove("active");
+          } else {
+            this.currentIndex++;
 
-          console.log(this.currentIndex);
+            this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
 
-          this.topContainer.querySelector("img").src = `${
-            this.cats[this.currentIndex].url
-          }`;
+            this.bottomImages.children[this.currentIndex].classList.add("active");
+            this.bottomImages.children[this.currentIndex - 1].classList.remove("active");
+          }
         } else if (clickedElement.classList.contains("left-arrow")) {
-          this.currentIndex <= 0
-            ? (this.currentIndex = this.images.length)
-            : this.currentIndex--;
+          if (this.currentIndex === 0) {
+            console.log(this.bottomImages.children);
+            this.currentIndex = this.bottomImages.children.length - 1;
+            console.log(this.currentIndex);
+            this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
 
-          console.log(this.currentIndex);
+            this.bottomImages.children[this.currentIndex].classList.add("active");
+            this.bottomImages.children[0].classList.remove("active");
+          } else {
+            this.currentIndex--;
 
-          this.topContainer.querySelector("img").src = `${
-            this.cats[this.currentIndex].url
-          }`;
+            this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
+
+            this.bottomImages.children[this.currentIndex].classList.add("active");
+            this.bottomImages.children[this.currentIndex + 1].classList.remove("active");
+          }
         }
       });
     });

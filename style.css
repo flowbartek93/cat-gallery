@@ -92,7 +92,7 @@ img {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   transform-origin: 50% 50%;
-  text-shadow: 4px 4px 2px rgb(12, 11, 11, 0.8);
+  text-shadow: 4px 2px 2px rgba(150, 150, 150, 1);
 }
 
 .overlay-cancel:hover {
@@ -131,7 +131,18 @@ img {
 }
 
 .thumbnail.active {
-  border: 2px solid darkkhaki;
+  filter: brightness(50%);
+  -webkit-box-shadow: 1px 1px 15px 9px rgba(0, 0, 0, 0.56);
+  box-shadow: 1px 1px 15px 9px rgba(0, 0, 0, 0.56);
+}
+
+.thumbnail {
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+}
+
+.thumbnail:hover {
+  filter: brightness(80%);
 }
 
 .wrapper {
@@ -161,4 +172,5 @@ img {
   font-size: 8.5rem;
   color: white;
   cursor: pointer;
+  text-shadow: 4px 2px 2px rgba(150, 150, 150, 1);
 }
