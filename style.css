@@ -1,0 +1,164 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans Condensed", sans-serif;
+}
+
+body {
+  background-color: azure;
+  height: 100vh;
+}
+
+body.active {
+  overflow: hidden;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+h1 {
+  text-align: center;
+  padding: 5rem;
+  font-size: 4rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 400px);
+  grid-template-rows: repeat(4, minmax(200px, 300px));
+  margin: 0 auto;
+  gap: 1rem;
+  width: max-content;
+}
+
+.gallery-img {
+  cursor: pointer;
+  overflow: hidden;
+}
+
+img {
+  transition: all 0.2s ease-in-out;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.gallery-img > img:hover {
+  transform: scale(110%);
+  filter: brightness(80%);
+}
+
+.img-1 {
+  grid-row: span 2;
+}
+
+.img-4 {
+  grid-column: span 2;
+}
+
+.img-6 {
+  grid-column: span 2;
+}
+.img-7 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.img-8 {
+  grid-row: span 2;
+}
+.overlay.active {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  filter: blur(20px);
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+.overlay-cancel {
+  display: none;
+  font-size: 10rem;
+  color: white;
+  z-index: 1000;
+  position: fixed;
+  top: 10%;
+  right: 10%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  transform-origin: 50% 50%;
+  text-shadow: 4px 4px 2px rgb(12, 11, 11, 0.8);
+}
+
+.overlay-cancel:hover {
+  transform: scale(1.1);
+}
+.overlay-cancel.active {
+  display: block;
+}
+
+.top-container {
+  height: 80%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.bottom-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  justify-content: center;
+  align-items: center;
+
+  height: 30%;
+}
+
+.bottom-images > .thumbnail {
+  display: inline-block;
+  margin: 0 1rem;
+  height: 15rem;
+  width: 15rem;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.thumbnail.active {
+  border: 2px solid darkkhaki;
+}
+
+.wrapper {
+  display: none;
+  flex-direction: column;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+
+  z-index: 300;
+}
+
+.wrapper.active {
+  display: flex;
+}
+.top-container > img {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+}
+
+.arrow {
+  font-size: 8.5rem;
+  color: white;
+  cursor: pointer;
+}
