@@ -68,6 +68,7 @@ class Gallery {
       btn.addEventListener("click", (e) => {
         let clickedElement = e.target.parentElement;
 
+        //W prawo
         if (clickedElement.classList.contains("right-arrow")) {
           if (this.currentIndex >= this.images.length - 1) {
             this.currentIndex = 0;
@@ -82,7 +83,11 @@ class Gallery {
             this.bottomImages.children[this.currentIndex].classList.add("active");
             this.bottomImages.children[this.currentIndex - 1].classList.remove("active");
           }
-        } else if (clickedElement.classList.contains("left-arrow")) {
+        }
+
+        //W lewoo
+
+        if (clickedElement.classList.contains("left-arrow")) {
           if (this.currentIndex === 0) {
             console.log(this.bottomImages.children);
             this.currentIndex = this.bottomImages.children.length - 1;
@@ -100,6 +105,22 @@ class Gallery {
             this.bottomImages.children[this.currentIndex + 1].classList.remove("active");
           }
         }
+      });
+    });
+  }
+
+  switchByThumbnail() {
+    console.log(this.bottomImages);
+    this.bottomImages.childNodes.forEach((thmb, index) => {
+      thmb.addEventListener("click", (e) => {
+        let thumbnailUrlStyle = e.target.style.backgroundImage.split('"')[1];
+        console.log(thumbnailUrlStyle);
+
+        this.bottomImages.children[index].classList.add("active");
+        this.bottomImages.children[this.currentIndex].classList.remove("active");
+        this.topContainer.querySelector("img").src = thumbnailUrlStyle;
+
+        this.currentIndex = index;
       });
     });
   }
@@ -122,6 +143,7 @@ class Gallery {
 
     this.bottomImages.children[this.currentIndex].classList.add("active");
 
+    this.switchByThumbnail();
     this.closeInterface();
   }
 

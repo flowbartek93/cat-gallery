@@ -131,18 +131,16 @@ img {
 }
 
 .thumbnail.active {
-  filter: brightness(50%);
-  -webkit-box-shadow: 1px 1px 15px 9px rgba(0, 0, 0, 0.56);
-  box-shadow: 1px 1px 15px 9px rgba(0, 0, 0, 0.56);
+  outline: 5px solid white;
+  transition: all 0.1s ease-in-out;
 }
 
 .thumbnail {
   cursor: pointer;
-  transition: all 0.2s ease-in;
 }
 
 .thumbnail:hover {
-  filter: brightness(80%);
+  filter: brightness(110%);
 }
 
 .wrapper {
