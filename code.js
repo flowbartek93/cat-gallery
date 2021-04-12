@@ -16,7 +16,7 @@ class Gallery {
   }
 
   async fetchCats() {
-    const url = `https://api.thecatapi.com/v1/images/search?limit=8&mime_types=jpg`;
+    const url = `https://api.thecatapi.com/v1/images/search?limit=15&mime_types=jpg`;
 
     const response = await fetch(url, {
       headers: {
@@ -134,17 +134,30 @@ class Gallery {
 
     // create thumbnails interface
 
-    this.images.forEach((image) => {
+    this.images.forEach((image, index) => {
       const divElement = document.createElement("div");
       divElement.style.backgroundImage = `url(${image.firstElementChild.src})`;
       divElement.classList.add("thumbnail");
+
+      //miejsce wklejania miniaturek
       this.bottomImages.appendChild(divElement);
     });
 
     this.bottomImages.children[this.currentIndex].classList.add("active");
 
     this.switchByThumbnail();
+    // this.adjustBottomImages();
     this.closeInterface();
+  }
+
+  adjustBottomImages() {
+    const array = [...this.bottomImages.children];
+
+    let left = 0;
+    array.forEach((thumbnail) => {
+      thumbnail.style.left = left;
+      left += 200;
+    });
   }
 
   closeInterface() {
