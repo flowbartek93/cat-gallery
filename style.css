@@ -169,21 +169,24 @@ img {
   transform: translate(-50%, -50%);
   position: relative;
   overflow: hidden;
-  max-width: calc(15rem * 8 - 40px);
+  max-width: calc(15rem * 9 - 20px);
   height: 200px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
 .bottom-images > .thumbnail {
-  flex: 1 0 auto;
+  position: relative;
+  flex: 0 0 auto;
   height: 15rem;
   width: 15rem;
   margin: 0 20px;
+  left: 0;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
+  transition: all 0.2s ease-in;
 }
 
 .thumbnail.active {

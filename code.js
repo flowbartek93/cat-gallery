@@ -11,7 +11,7 @@ class Gallery {
     this.topContainer = document.querySelector(".top-container");
     this.bottomContainer = document.querySelector(".bottom-container");
     this.bottomImages = document.querySelector(".bottom-images");
-
+    this.thumbnail = document.querySelectorAll(".thumbnail");
     this.currentIndex = null;
   }
 
@@ -83,6 +83,8 @@ class Gallery {
             this.bottomImages.children[this.currentIndex].classList.add("active");
             this.bottomImages.children[this.currentIndex - 1].classList.remove("active");
           }
+
+          this.moveImages();
         }
 
         //W lewoo
@@ -104,6 +106,8 @@ class Gallery {
             this.bottomImages.children[this.currentIndex].classList.add("active");
             this.bottomImages.children[this.currentIndex + 1].classList.remove("active");
           }
+
+          this.moveImages();
         }
       });
     });
@@ -141,23 +145,27 @@ class Gallery {
 
       //miejsce wklejania miniaturek
       this.bottomImages.appendChild(divElement);
+
+      //kliknięty element musi być appendowany jako pierwszy
     });
 
+    console.log(this.currentIndex);
     this.bottomImages.children[this.currentIndex].classList.add("active");
 
     this.switchByThumbnail();
-    // this.adjustBottomImages();
+
     this.closeInterface();
   }
 
-  adjustBottomImages() {
-    const array = [...this.bottomImages.children];
-
-    let left = 0;
-    array.forEach((thumbnail) => {
-      thumbnail.style.left = left;
-      left += 200;
-    });
+  moveImages() {
+    const oczko = 190;
+    const thumbnails = [...this.bottomImages.children];
+    if (this.currentIndex < 4) {
+      console.log("przesuwam");
+      thumbnails.forEach((thmb) => {
+        thmb.style.left = oczko * 4 + "px";
+      });
+    }
   }
 
   closeInterface() {
