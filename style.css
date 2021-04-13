@@ -24,9 +24,6 @@ h1 {
   font-size: 4rem;
 }
 
-.container {
-}
-
 .gallery {
   margin: 0 auto;
   width: 70%;
@@ -100,22 +97,17 @@ h1 {
   grid-area: img-15;
 }
 
-.gallery-img {
-  cursor: pointer;
-  overflow: hidden;
-}
-
 img {
   transition: all 0.2s ease-in-out;
   height: 100%;
   width: 100%;
   object-fit: cover;
   object-position: center;
+  cursor: pointer;
 }
 
-.gallery-img > img:hover {
-  transform: scale(110%);
-  filter: brightness(80%);
+img:hover {
+  filter: brightness(130%);
 }
 
 .overlay.active {
@@ -141,7 +133,7 @@ img {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   transform-origin: 50% 50%;
-  text-shadow: 4px 2px 2px rgba(150, 150, 150, 1);
+  text-shadow: 4px 2px 2px rgba(26, 25, 25, 0.6);
 }
 
 .overlay-cancel:hover {
@@ -226,10 +218,16 @@ img {
 }
 
 .arrow {
-  font-size: 8.5rem;
+  font-size: 12rem;
   color: white;
   cursor: pointer;
-  text-shadow: 4px 2px 2px rgba(150, 150, 150, 1);
+  text-shadow: 4px 2px 2px rgba(26, 25, 25, 0.6);
+  transition: 0.2s ease-in;
+}
+
+.arrow:hover {
+  transform: scale(1.1);
+  text-shadow: 6px 4px 2px rgba(26, 25, 25, 0.6);
 }
 
 @media screen and (max-width: 1400px) {
