@@ -6,11 +6,20 @@ class CreateGallery {
     this.overlay = document.querySelector(".overlay");
     this.interfaceContainer = document.querySelector(".wrapper");
     this.topContainer = document.querySelector(".top-container");
-    this.thumbnails = document.querySelector(".bottom-images");
-
-    this.currentIndex = null;
     this.images = [];
     this.events();
+
+    //thumbnails properties
+    this.thumbnailsContainer = document.querySelector(".bottom-images");
+
+    this.thumbnailPosition = 0;
+    this.thumbnailsToDisplay = 10; // how many thumbnails I want to be visible;
+    this.oneNotch;
+    this.currentIndex = null;
+    this.overflow = null;
+
+    this.nextBtn = document.querySelector(".right-arrow");
+    this.prevBtn = document.querySelector(".left-arrow");
   }
 
   async fetchCats() {
@@ -50,21 +59,28 @@ class CreateGallery {
   }
 
   showImage() {
-    const allImages = document.querySelectorAll(".img");
+    const allImages = document.querySelectorAll(".img"); // elements that have been already appended into its container - it has nothing to do with this.images[]
 
     allImages.forEach((img, index) => {
       img.addEventListener("click", () => {
-        console.log(img);
         const source = img.src;
         const bigImage = this.createDOMElement("img", "big-image");
         bigImage.src = source;
 
         this.currentIndex = index + 1;
-        console.log(this.currentIndex);
 
         this.appendDOMElement(this.topContainer, bigImage);
-        this.createInterface(source);
+
+        this.createInterface(source); //displaying big image follows with creating entire interface with thumbnails etc.
       });
+    });
+  }
+
+  displayThumbnails() {
+    this.images.forEach((image, index) => {
+      const thumbnail = this.createDOMElement("div", "thumbnail");
+      thumbnail.style.backgroundImage = `url(${image.url})`;
+      this.appendDOMElement(this.thumbnailsContainer, thumbnail);
     });
   }
 
@@ -77,8 +93,116 @@ class CreateGallery {
     this.overlay.style.backgroundImage = `url(${source})`;
 
     this.displayThumbnails();
-    this.buttons();
+    this.setThumbnailsContainerWidth(this.images.length);
+    this.goToNext();
+    this.goToPrev();
+    this.selectThumbnail();
     this.closeInterface();
+  }
+
+  setThumbnailsContainerWidth() {
+    this.oneNotch = document.querySelector(".thumbnail").getBoundingClientRect().width; // getting width of single thumbnail. Imprtant value to properly scroll
+    const entireWidth = this.oneNotch * this.thumbnailsToDisplay;
+    this.thumbnailsContainer.style.maxWidth = entireWidth;
+
+    this.setThumbnailsPosition();
+  }
+
+  checkThumbnailPosition() {
+    let isVisible;
+    if (this.currentIndex > this.thumbnailsToDisplay) {
+      isVisible = false;
+    } else {
+      isVisible = true;
+    }
+    return isVisible;
+  }
+
+  setThumbnailsPosition(change) {
+    const isVisible = this.checkThumbnailPosition();
+    const thumbnails = document.querySelectorAll(".thumbnail");
+
+    let newLeftValue;
+
+    //checking
+    if (!isVisible && !change) {
+      newLeftValue = -(this.currentIndex - this.thumbnailsToDisplay) * this.oneNotch;
+      this.setPositionLeft(thumbnails, newLeftValue);
+    }
+
+    //Runs when prevbtn or nextbtn are fired
+    if (change) {
+      let styleValue = window.getComputedStyle(this.thumbnailsContainer.children[0]);
+      let leftValue = parseInt(styleValue.left);
+      let maxNotches = this.images.length - this.thumbnailsToDisplay;
+      let maxNextValue = -(maxNotches * this.oneNotch);
+      let maxPrevValue = 0;
+
+      if (change.classList.contains("fa-angle-right")) {
+        if (leftValue === maxNextValue) {
+          newLeftValue = 0;
+          this.setPositionLeft(thumbnails, newLeftValue);
+        } else {
+          newLeftValue = leftValue - this.oneNotch;
+          this.setPositionLeft(thumbnails, newLeftValue);
+        }
+      } else if (change.classList.contains("fa-angle-left")) {
+        if (leftValue === maxPrevValue) {
+          console.log("1");
+          newLeftValue = maxNextValue;
+          this.setPositionLeft(thumbnails, newLeftValue);
+        } else {
+          console.log("2");
+          newLeftValue = leftValue + this.oneNotch;
+          this.setPositionLeft(thumbnails, newLeftValue);
+        }
+      }
+    }
+  }
+
+  setPositionLeft(array, newValue) {
+    return array.forEach((thumbnail) => {
+      thumbnail.style.left = newValue;
+    });
+  }
+
+  selectThumbnail() {
+    const thumbnails = document.querySelectorAll(".thumbnail");
+    const currentImage = document.querySelector(".big-image");
+    thumbnails.forEach((thmb, index) => {
+      thmb.addEventListener("click", (e) => {
+        console.log(e.target);
+
+        const url = e.target.style.backgroundImage;
+        const src = url.split('"')[1];
+        currentImage.src = src;
+
+        this.currentIndex = index + 1;
+        console.log(this.currentIndex);
+      });
+    });
+  }
+
+  goToNext() {
+    this.nextBtn.addEventListener("click", (e) => {
+      if (this.currentIndex > this.images.length - 1) {
+        this.currentIndex = 0;
+      }
+      this.currentIndex++;
+      this.topContainer.querySelector("img").src = `${this.images[this.currentIndex - 1].url}`;
+      this.setThumbnailsPosition(e.target);
+    });
+  }
+
+  goToPrev() {
+    this.prevBtn.addEventListener("click", (e) => {
+      this.currentIndex--;
+      if (this.currentIndex < 1) {
+        this.currentIndex = this.images.length;
+      }
+      this.topContainer.querySelector("img").src = `${this.images[this.currentIndex - 1].url}`;
+      this.setThumbnailsPosition(e.target);
+    });
   }
 
   closeInterface() {
@@ -88,142 +212,23 @@ class CreateGallery {
       this.cancelBtn.classList.remove("active");
       document.body.classList.remove("active");
       this.overlay.removeAttribute("style");
-      this.topContainer.lastElementChild.remove();
+
+      //remove top image
+
+      if (this.topContainer.contains(document.querySelector(".big-image"))) {
+        document.querySelector(".big-image").remove();
+      }
+
+      //remove all thumbnails
+      while (this.thumbnailsContainer.hasChildNodes()) {
+        this.thumbnailsContainer.removeChild(this.thumbnailsContainer.firstElementChild);
+      }
     });
   }
-
-  buttons() {
-    const nextBtn = document.querySelector(".right-arrow");
-    const prevBtn = document.querySelector(".left-arrow");
-
-    nextBtn.addEventListener("click", () => {
-      this.goToNext();
-    });
-    prevBtn.addEventListener("click", () => {
-      this.goToPrev();
-    });
-  }
-
-  goToNext() {
-    this.currentIndex++;
-
-    this.topContainer.querySelector("img").src = `${this.images[this.currentIndex].url}`;
-  }
-
-  goToPrev() {
-    this.currentIndex--;
-    this.topContainer.querySelector("img").src = `${this.images[this.currentIndex].url}`;
-  }
-
-  displayThumbnails() {
-    this.images.forEach((image) => {
-      const thumbnail = this.createDOMElement("div", "thumbnail");
-      thumbnail.style.backgroundImage = `url(${image.url})`;
-      this.appendDOMElement(this.thumbnails, thumbnail);
-    });
-  }
-
-  setThumbnailsContainerWidth() {}
 
   events() {
     this.fetchCats();
   }
 }
-
-// switchImage() {
-//   const arrowBtns = document.querySelectorAll(".arrow");
-
-//   arrowBtns.forEach((btn) => {
-//     btn.addEventListener("click", (e) => {
-//       let clickedElement = e.target.parentElement;
-
-//       //W prawo
-//       if (clickedElement.classList.contains("right-arrow")) {
-//         if (this.currentIndex >= this.images.length - 1) {
-//           this.currentIndex = 0;
-//           this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
-//           this.bottomImages.children[this.currentIndex].classList.add("active");
-//           this.bottomImages.children[this.images.length - 1].classList.remove("active");
-//         } else {
-//           this.currentIndex++;
-
-//           this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
-
-//           this.bottomImages.children[this.currentIndex].classList.add("active");
-//           this.bottomImages.children[this.currentIndex - 1].classList.remove("active");
-//         }
-
-//         this.moveImages();
-//       }
-
-//       //W lewoo
-
-//       if (clickedElement.classList.contains("left-arrow")) {
-//         if (this.currentIndex === 0) {
-//           console.log(this.bottomImages.children);
-//           this.currentIndex = this.bottomImages.children.length - 1;
-//           console.log(this.currentIndex);
-//           this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
-
-//           this.bottomImages.children[this.currentIndex].classList.add("active");
-//           this.bottomImages.children[0].classList.remove("active");
-//         } else {
-//           this.currentIndex--;
-
-//           this.topContainer.querySelector("img").src = `${this.cats[this.currentIndex].url}`;
-
-//           this.bottomImages.children[this.currentIndex].classList.add("active");
-//           this.bottomImages.children[this.currentIndex + 1].classList.remove("active");
-//         }
-
-//         this.moveImages();
-//       }
-//     });
-//   });
-// }
-
-// switchByThumbnail() {
-//   console.log(this.bottomImages);
-//   this.bottomImages.childNodes.forEach((thmb, index) => {
-//     thmb.addEventListener("click", (e) => {
-//       let thumbnailUrlStyle = e.target.style.backgroundImage.split('"')[1];
-//       console.log(thumbnailUrlStyle);
-
-//       this.bottomImages.children[index].classList.add("active");
-//       this.bottomImages.children[this.currentIndex].classList.remove("active");
-//       this.topContainer.querySelector("img").src = thumbnailUrlStyle;
-
-//       this.currentIndex = index;
-//     });
-//   });
-// }
-
-// moveImages() {
-//   const oczko = 190;
-//   const thumbnails = [...this.bottomImages.children];
-//   if (this.currentIndex < 4) {
-//     console.log("przesuwam");
-//     thumbnails.forEach((thmb) => {
-//       thmb.style.left = oczko * 4 + "px";
-//     });
-//   }
-// }
-
-// closeInterface() {
-//   const closeGallery = () => {
-//     this.overlay.classList.toggle("active");
-//     document.body.classList.toggle("active");
-//     this.cancelBtn.classList.toggle("active");
-//     this.wrapper.classList.toggle("active");
-
-//     while (this.bottomImages.hasChildNodes()) {
-//       this.bottomImages.lastElementChild.remove();
-//     }
-//     this.topContainer.querySelector("img").remove();
-//     this.cancelBtn.removeEventListener("click", closeGallery);
-//   };
-
-//   this.cancelBtn.addEventListener("click", closeGallery);
-// }
 
 const createGallery = new CreateGallery(document.querySelector(".gallery"));
